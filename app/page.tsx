@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-
 const cards = [
   "Endings are not failures.",
   "The cycle only punishes refusal.",
@@ -60,63 +58,11 @@ function OuroborosMark({ className }: { className?: string }) {
 }
 
 export default function Page() {
-  const imageCardRef = useRef<HTMLDivElement>(null);
-  const orbRef = useRef<HTMLDivElement>(null);
-  const visualRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const reveals = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry, index) => {
-          if (entry.isIntersecting) {
-            window.setTimeout(() => entry.target.classList.add("show"), index * 70);
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.14 }
-    );
-
-    reveals.forEach((element) => observer.observe(element));
-    window.setTimeout(() => reveals.slice(0, 5).forEach((element) => element.classList.add("show")), 120);
-
-    const handleMouseMove = (event: MouseEvent) => {
-      const x = event.clientX / window.innerWidth - 0.5;
-      const y = event.clientY / window.innerHeight - 0.5;
-
-      if (imageCardRef.current) {
-        imageCardRef.current.style.transform = `rotateY(${x * 7}deg) rotateX(${-y * 7}deg) translateY(${y * 8}px)`;
-      }
-
-      if (orbRef.current) {
-        orbRef.current.style.transform = `translate(${x * 85}px, ${y * 85}px)`;
-      }
-    };
-
-    const handleScroll = () => {
-      if (visualRef.current) {
-        const lift = Math.max(window.scrollY * -0.07, -90);
-        visualRef.current.style.transform = `translateY(${lift}px)`;
-      }
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
   return (
     <main>
       <div className="light" />
       <div className="noise" />
-      <div className="orb" ref={orbRef} />
+      <div className="orb" />
 
       <nav className="nav" aria-label="Primary navigation">
         <a href="#" className="logo" aria-label="Ouroboros home">
@@ -154,11 +100,11 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="visual reveal" ref={visualRef}>
+        <div className="visual reveal">
           <div className="ring" />
           <div className="ring2" />
           <OuroborosMark className="symbol-svg" />
-          <div className="image-card" ref={imageCardRef}>
+          <div className="image-card">
             <img
               src="/ouroboros-hero.png"
               alt="Black minimalist fashion image inspired by the Ouroboros symbol"
@@ -261,38 +207,13 @@ export default function Page() {
           margin: 0;
           color: var(--ink);
           background:
-            radial-gradient(circle at 50% 0%, rgba(244, 241, 234, 0.14), transparent 32%),
-            radial-gradient(circle at 82% 45%, rgba(244, 241, 234, 0.07), transparent 30%),
-            radial-gradient(circle at 15% 82%, rgba(244, 241, 234, 0.04), transparent 25%),
+            radial-gradient(circle at 50% 0%, rgba(244, 241, 234, 0.13), transparent 34%),
+            radial-gradient(circle at 82% 45%, rgba(244, 241, 234, 0.055), transparent 32%),
             var(--bg);
           font-family:
             Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
             "Segoe UI", sans-serif;
           overflow-x: hidden;
-        }
-
-        body::before {
-          content: "";
-          position: fixed;
-          inset: 0;
-          pointer-events: none;
-          z-index: 90;
-          opacity: 0.055;
-          background-image:
-            linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.18) 1px, transparent 1px);
-          background-size: 4px 4px;
-          mix-blend-mode: screen;
-        }
-
-        body::after {
-          content: "";
-          position: fixed;
-          inset: 0;
-          pointer-events: none;
-          z-index: 91;
-          background: radial-gradient(circle at center, transparent 0 28%, rgba(0, 0, 0, 0.48) 78%, rgba(0, 0, 0, 0.9) 100%);
-          mix-blend-mode: multiply;
         }
 
         a {
@@ -301,39 +222,39 @@ export default function Page() {
         }
 
         .noise {
-          position: fixed;
+          position: absolute;
           inset: 0;
           pointer-events: none;
-          z-index: 89;
-          opacity: 0.18;
-          background: repeating-radial-gradient(circle at 11% 17%, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.06) 1px, transparent 1px, transparent 3px);
-          mix-blend-mode: overlay;
-          animation: noiseShift 0.65s steps(2) infinite;
+          z-index: 0;
+          opacity: 0.08;
+          background-image:
+            linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+          background-size: 6px 6px;
         }
 
         .light {
-          position: fixed;
-          inset: -28%;
+          position: absolute;
+          inset: 0 0 auto;
+          height: 120vh;
           pointer-events: none;
-          z-index: -2;
-          opacity: 0.26;
-          filter: blur(24px);
-          background: conic-gradient(from 180deg at 50% 50%, transparent, rgba(244, 241, 234, 0.14), transparent, rgba(244, 241, 234, 0.06), transparent);
-          animation: slowSpin 42s linear infinite;
+          z-index: 0;
+          opacity: 0.72;
+          background:
+            radial-gradient(circle at 62% 20%, rgba(244, 241, 234, 0.1), transparent 35%),
+            radial-gradient(circle at 18% 82%, rgba(244, 241, 234, 0.045), transparent 32%);
         }
 
         .orb {
-          position: fixed;
+          position: absolute;
           left: 58%;
           top: 11%;
           width: 44vw;
           aspect-ratio: 1;
           border-radius: 50%;
           pointer-events: none;
-          z-index: -1;
+          z-index: 0;
           background: radial-gradient(circle, rgba(244, 241, 234, 0.12), transparent 62%);
-          filter: blur(32px);
-          transition: transform 0.18s ease-out;
         }
 
         .nav {
@@ -463,7 +384,6 @@ export default function Page() {
           display: grid;
           place-items: center;
           perspective: 1200px;
-          will-change: transform;
         }
 
         .ring {
@@ -475,7 +395,6 @@ export default function Page() {
           box-shadow:
             inset 0 0 75px rgba(255, 255, 255, 0.035),
             0 0 100px rgba(255, 255, 255, 0.035);
-          animation: slowSpin 34s linear infinite;
         }
 
         .ring::before {
@@ -497,7 +416,6 @@ export default function Page() {
           aspect-ratio: 1;
           border: 1px solid rgba(244, 241, 234, 0.11);
           border-radius: 50%;
-          animation: reverseSpin 58s linear infinite;
         }
 
         .symbol-svg {
@@ -505,7 +423,6 @@ export default function Page() {
           width: min(70vw, 520px);
           opacity: 0.32;
           color: var(--ink);
-          animation: reverseSpin 52s linear infinite;
           filter: drop-shadow(0 0 42px rgba(244, 241, 234, 0.08));
         }
 
@@ -518,8 +435,6 @@ export default function Page() {
           border: 1px solid var(--line);
           background: #080808;
           box-shadow: 0 60px 130px rgba(0, 0, 0, 0.88);
-          transform-style: preserve-3d;
-          transition: transform 0.2s ease-out;
         }
 
         .image-card img {
@@ -551,7 +466,6 @@ export default function Page() {
         .marquee span {
           display: inline-block;
           min-width: 200%;
-          animation: marquee 28s linear infinite;
         }
 
         .section {
@@ -667,7 +581,6 @@ export default function Page() {
           border-radius: 50%;
           border: 1px solid rgba(244, 241, 234, 0.11);
           box-shadow: 0 0 110px rgba(244, 241, 234, 0.05);
-          animation: slowSpin 44s linear infinite;
         }
 
         .final-inner {
@@ -707,42 +620,6 @@ export default function Page() {
         .reveal.show {
           opacity: 1;
           transform: translateY(0);
-        }
-
-        @keyframes slowSpin {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-
-        @keyframes reverseSpin {
-          from {
-            transform: rotate(360deg);
-          }
-          to {
-            transform: rotate(0deg);
-          }
-        }
-
-        @keyframes noiseShift {
-          from {
-            transform: translate(0, 0);
-          }
-          to {
-            transform: translate(2px, -2px);
-          }
-        }
-
-        @keyframes marquee {
-          from {
-            transform: translateX(0);
-          }
-          to {
-            transform: translateX(-50%);
-          }
         }
 
         @media (prefers-reduced-motion: reduce) {
