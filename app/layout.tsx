@@ -2,9 +2,9 @@ import type { ReactNode } from "react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Ouroboros Landing",
+  title: "OUROBOROS - Every End Is A New Beginning",
   description:
-    "A minimalist exploration of transformation, discipline, and continuous evolution."
+    "A motion-led landing page about renewal, discipline, return, and transformation."
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
