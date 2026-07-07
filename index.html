@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OUROBOROS — Every End Is A New Beginning</title>
+  <style>
+    :root {
+      --bg: #030303;
+      --ink: #f4f1ea;
+      --muted: #a39d91;
+      --soft: #696158;
+      --line: rgba(244, 241, 234, 0.14);
+      --panel: rgba(255,255,255,0.04);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(244,241,234,.14), transparent 32%),
+        radial-gradient(circle at 82% 45%, rgba(244,241,234,.07), transparent 30%),
+        radial-gradient(circle at 15% 82%, rgba(244,241,234,.04), transparent 25%),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 90;
+      opacity: .055;
+      background-image:
+        linear-gradient(rgba(255,255,255,.18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.18) 1px, transparent 1px);
+      background-size: 4px 4px;
+      mix-blend-mode: screen;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 91;
+      background: radial-gradient(circle at center, transparent 0 28%, rgba(0,0,0,.48) 78%, rgba(0,0,0,.9) 100%);
+      mix-blend-mode: multiply;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 89;
+      opacity: .18;
+      background: repeating-radial-gradient(circle at 11% 17%, rgba(255,255,255,.06), rgba(255,255,255,.06) 1px, transparent 1px, transparent 3px);
+      mix-blend-mode: overlay;
+      animation: noiseShift .65s steps(2) infinite;
+    }
+
+    .light {
+      position: fixed;
+      inset: -28%;
+      pointer-events: none;
+      z-index: -2;
+      opacity: .26;
+      filter: blur(24px);
+      background: conic-gradient(from 180deg at 50% 50%, transparent, rgba(244,241,234,.14), transparent, rgba(244,241,234,.06), transparent);
+      animation: slowSpin 42s linear infinite;
+    }
+
+    .orb {
+      position: fixed;
+      left: 58%;
+      top: 11%;
+      width: 44vw;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: -1;
+      background: radial-gradient(circle, rgba(244,241,234,.12), transparent 62%);
+      filter: blur(32px);
+      transition: transform .18s ease-out;
+    }
+
+    .nav {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 50;
+      height: 78px;
+      padding: 0 clamp(20px, 5vw, 72px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to bottom, rgba(3,3,3,.78), transparent);
+      backdrop-filter: blur(16px);
+    }
+
+    .logo, .navlinks a, .kicker, .footer {
+      text-transform: uppercase;
+      letter-spacing: .32em;
+      font-size: 11px;
+    }
+
+    .navlinks {
+      display: flex;
+      gap: 26px;
+      color: var(--muted);
+    }
+
+    .navlinks a { transition: color .25s ease; }
+    .navlinks a:hover { color: var(--ink); }
+
+    .hero {
+      min-height: 100vh;
+      padding: 112px clamp(20px, 5vw, 72px) 64px;
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: clamp(34px, 6vw, 88px);
+      align-items: center;
+    }
+
+    .kicker {
+      color: var(--muted);
+      margin: 0 0 26px;
+    }
+
+    h1, h2, h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 400;
+      letter-spacing: -.065em;
+    }
+
+    h1 {
+      font-size: clamp(64px, 11vw, 174px);
+      line-height: .86;
+      margin: 0;
+    }
+
+    h2 {
+      font-size: clamp(44px, 7vw, 108px);
+      line-height: .94;
+      margin: 0;
+    }
+
+    .hero-copy {
+      max-width: 660px;
+      color: var(--muted);
+      font-size: clamp(16px, 2vw, 21px);
+      line-height: 1.76;
+      margin: 34px 0 0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 38px;
+    }
+
+    .btn {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      padding: 15px 21px;
+      text-transform: uppercase;
+      letter-spacing: .22em;
+      font-size: 11px;
+      transition: transform .25s ease, border-color .25s ease;
+    }
+
+    .btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.24), transparent);
+      transform: translateX(-130%);
+      transition: transform .62s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(244,241,234,.42);
+    }
+
+    .btn:hover::before { transform: translateX(130%); }
+
+    .btn.primary {
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    .visual {
+      position: relative;
+      min-height: 660px;
+      display: grid;
+      place-items: center;
+      perspective: 1200px;
+    }
+
+    .ring {
+      position: absolute;
+      width: min(88vw, 650px);
+      aspect-ratio: 1;
+      border: 1px solid rgba(244,241,234,.28);
+      border-radius: 999px;
+      box-shadow: inset 0 0 75px rgba(255,255,255,.035), 0 0 100px rgba(255,255,255,.035);
+      animation: slowSpin 34s linear infinite;
+    }
+
+    .ring::before {
+      content: "OUROBOROS • RENEWAL • DISCIPLINE • RETURN • TRANSFORMATION •";
+      position: absolute;
+      inset: 24px;
+      border-radius: 50%;
+      display: grid;
+      place-items: start center;
+      color: rgba(244,241,234,.42);
+      letter-spacing: .26em;
+      font-size: 10px;
+    }
+
+    .ring2 {
+      position: absolute;
+      width: min(70vw, 510px);
+      aspect-ratio: 1;
+      border: 1px solid rgba(244,241,234,.11);
+      border-radius: 50%;
+      animation: reverseSpin 58s linear infinite;
+    }
+
+    .symbol-svg {
+      position: absolute;
+      width: min(70vw, 520px);
+      opacity: .32;
+      color: var(--ink);
+      animation: reverseSpin 52s linear infinite;
+      filter: drop-shadow(0 0 42px rgba(244,241,234,.08));
+    }
+
+    .image-card {
+      position: relative;
+      z-index: 4;
+      width: min(560px, 100%);
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #080808;
+      box-shadow: 0 60px 130px rgba(0,0,0,.88);
+      transform-style: preserve-3d;
+      transition: transform .2s ease-out;
+    }
+
+    .image-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: contrast(1.09) saturate(.72);
+      transform: scale(1.02);
+    }
+
+    .image-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, #030303 0%, transparent 42%, rgba(255,255,255,.04));
+    }
+
+    .marquee {
+      border-block: 1px solid var(--line);
+      overflow: hidden;
+      white-space: nowrap;
+      color: rgba(244,241,234,.35);
+      text-transform: uppercase;
+      letter-spacing: .24em;
+      font-size: 12px;
+      padding: 18px 0;
+    }
+
+    .marquee span {
+      display: inline-block;
+      animation: marquee 28s linear infinite;
+    }
+
+    .section {
+      padding: clamp(84px, 12vw, 170px) clamp(20px, 5vw, 72px);
+      border-top: 1px solid var(--line);
+    }
+
+    .two {
+      display: grid;
+      grid-template-columns: .85fr 1.15fr;
+      gap: clamp(32px, 6vw, 88px);
+      align-items: start;
+    }
+
+    .copy {
+      color: var(--muted);
+      font-size: clamp(16px, 1.7vw, 20px);
+      line-height: 1.85;
+      margin: 0;
+    }
+
+    .cards {
+      display: grid;
+      gap: 14px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: clamp(22px, 3vw, 34px);
+      backdrop-filter: blur(14px);
+      transition: transform .35s ease, background .35s ease, border-color .35s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      background: rgba(255,255,255,.06);
+      border-color: rgba(244,241,234,.3);
+    }
+
+    .card span, .tile span {
+      display: block;
+      color: var(--soft);
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      font-size: 11px;
+      margin-bottom: 28px;
+    }
+
+    .card strong {
+      display: block;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 400;
+      letter-spacing: -.04em;
+      line-height: 1;
+      font-size: clamp(30px, 4.5vw, 58px);
+    }
+
+    .grid {
+      margin-top: 64px;
+      border: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--line);
+    }
+
+    .tile {
+      min-height: 250px;
+      background: rgba(3,3,3,.94);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: background .3s ease, transform .3s ease;
+    }
+
+    .tile:hover {
+      background: rgba(18,18,18,.98);
+      transform: translateY(-3px);
+    }
+
+    .tile h3 {
+      font-size: 40px;
+      margin: 0 0 16px;
+    }
+
+    .tile p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .final {
+      min-height: 86vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      position: relative;
+    }
+
+    .final::before {
+      content: "";
+      position: absolute;
+      width: min(86vw, 720px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 1px solid rgba(244,241,234,.11);
+      box-shadow: 0 0 110px rgba(244,241,234,.05);
+      animation: slowSpin 44s linear infinite;
+    }
+
+    .final-inner {
+      max-width: 980px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .symbol-wrap {
+      width: 190px;
+      margin: 0 auto 32px;
+      color: var(--ink);
+    }
+
+    .footer {
+      border-top: 1px solid var(--line);
+      padding: 26px clamp(20px, 5vw, 72px);
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity .95s ease, transform .95s cubic-bezier(.2,.75,.2,1);
+    }
+
+    .reveal.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes slowSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes reverseSpin {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    @keyframes noiseShift {
+      from { transform: translate(0,0); }
+      to { transform: translate(2px,-2px); }
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    @media (max-width: 900px) {
+      .navlinks { display: none; }
+      .hero, .two, .grid { grid-template-columns: 1fr; }
+      .visual { min-height: 520px; }
+      .hero { padding-top: 104px; }
+      .footer { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="light"></div>
+  <div class="noise"></div>
+  <div class="orb" id="orb"></div>
+
+  <nav class="nav">
+    <a href="#" class="logo">OUROBOROS</a>
+    <div class="navlinks">
+      <a href="#symbol">Symbol</a>
+      <a href="#cycle">Cycle</a>
+      <a href="#manifesto">Manifesto</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <p class="kicker reveal">HTML5 Motion Experience</p>
+      <h1 class="reveal">Every End<br>Is A New<br>Beginning</h1>
+      <p class="hero-copy reveal">
+        Ouroboros is the discipline of returning to yourself — shedding what has expired,
+        absorbing the lesson, and entering the next cycle with sharper intent.
+      </p>
+      <div class="actions reveal">
+        <a class="btn primary" href="#symbol">Enter the cycle</a>
+        <a class="btn" href="#manifesto">Read manifesto</a>
+      </div>
+    </div>
+
+    <div class="visual reveal" id="visual">
+      <div class="ring"></div>
+      <div class="ring2"></div>
+      <svg viewBox="0 0 300 300" class="symbol-svg" aria-hidden="true">
+        <circle cx="150" cy="150" r="105" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
+        <path d="M217 68c29 17 48 48 48 84 0 58-47 105-105 105-45 0-84-29-99-69"
+          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.75"/>
+        <path d="M211 65l45 1-18 40"
+          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+        <path d="M78 226c-27-19-43-50-43-84 0-50 36-93 84-103"
+          fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.25"/>
+      </svg>
+      <div class="image-card" id="imageCard">
+        <img src="ouroboros-hero.png" alt="Black minimalist fashion image inspired by the Ouroboros symbol">
+      </div>
+    </div>
+  </section>
+
+  <div class="marquee">
+    <span>OUROBOROS · RENEWAL · DISCIPLINE · RETURN · TRANSFORMATION · EVERY END IS A NEW BEGINNING · OUROBOROS · RENEWAL · DISCIPLINE · RETURN · TRANSFORMATION · EVERY END IS A NEW BEGINNING · </span>
+  </div>
+
+  <section class="section two" id="symbol">
+    <div class="reveal">
+      <p class="kicker">The Symbol</p>
+      <h2>The serpent closes the circle.</h2>
+    </div>
+
+    <div class="cards">
+      <div class="card reveal"><span>01</span><strong>Endings are not failures.</strong></div>
+      <div class="card reveal"><span>02</span><strong>The cycle only punishes refusal.</strong></div>
+      <div class="card reveal"><span>03</span><strong>Renewal requires sacrifice.</strong></div>
+      <div class="card reveal"><span>04</span><strong>What returns must return transformed.</strong></div>
+    </div>
+  </section>
+
+  <section class="section" id="cycle">
+    <div class="two">
+      <div class="reveal">
+        <p class="kicker">The Cycle</p>
+        <h2>Destroy. Digest. Design. Return.</h2>
+      </div>
+      <p class="copy reveal">
+        The Ouroboros is not passive. It is a brutal symbol of self-renewal.
+        The old version must be consumed before the new one can be built.
+        In fashion, identity, business, and personal evolution, the loop is the same:
+        remove excess, preserve essence, and return with intent.
+      </p>
+    </div>
+
+    <div class="grid">
+      <article class="tile reveal"><span>01</span><div><h3>Destroy</h3><p>End what no longer carries the future.</p></div></article>
+      <article class="tile reveal"><span>02</span><div><h3>Digest</h3><p>Extract the lesson without worshipping the pain.</p></div></article>
+      <article class="tile reveal"><span>03</span><div><h3>Design</h3><p>Build the next form deliberately.</p></div></article>
+      <article class="tile reveal"><span>04</span><div><h3>Return</h3><p>Re-enter the world with sharper standards.</p></div></article>
+      <article class="tile reveal"><span>05</span><div><h3>Repeat</h3><p>The cycle continues until the identity is refined.</p></div></article>
+      <article class="tile reveal"><span>06</span><div><h3>Become</h3><p>Every loop leaves a cleaner silhouette.</p></div></article>
+    </div>
+  </section>
+
+  <section class="section final" id="manifesto">
+    <div class="final-inner reveal">
+      <div class="symbol-wrap">
+        <svg viewBox="0 0 300 300" aria-hidden="true">
+          <circle cx="150" cy="150" r="105" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
+          <path d="M217 68c29 17 48 48 48 84 0 58-47 105-105 105-45 0-84-29-99-69"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.75"/>
+          <path d="M211 65l45 1-18 40"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+        </svg>
+      </div>
+      <p class="kicker">Manifesto</p>
+      <h2>You are not starting over. You are returning with evidence.</h2>
+      <p class="copy" style="max-width:700px;margin:30px auto 0;">
+        The circle is not a trap. It is a forge. Each ending exposes what was weak.
+        Each return proves what survived.
+      </p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span>OUROBOROS / 2026</span>
+    <span>Every end is a new beginning</span>
+  </footer>
+
+  <script>
+    const reveals = document.querySelectorAll(".reveal");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add("show"), index * 70);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.14 });
+
+    reveals.forEach(el => observer.observe(el));
+
+    const card = document.getElementById("imageCard");
+    const orb = document.getElementById("orb");
+    const visual = document.getElementById("visual");
+
+    window.addEventListener("mousemove", (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5);
+      const y = (e.clientY / window.innerHeight - 0.5);
+
+      if (card) {
+        card.style.transform = `rotateY(${x * 7}deg) rotateX(${-y * 7}deg) translateY(${y * 8}px)`;
+      }
+
+      if (orb) {
+        orb.style.transform = `translate(${x * 85}px, ${y * 85}px)`;
+      }
+    });
+
+    window.addEventListener("scroll", () => {
+      const scrolled = window.scrollY;
+      if (visual) {
+        const lift = Math.max(scrolled * -0.07, -90);
+        visual.style.transform = `translateY(${lift}px)`;
+      }
+    });
+  </script>
+</body>
+</html>
