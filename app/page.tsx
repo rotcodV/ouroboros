@@ -1,5 +1,8 @@
 "use client";
 
+import { motion, useReducedMotion } from "framer-motion";
+import type { MotionProps } from "framer-motion";
+
 const cards = [
   "Endings are not failures.",
   "The cycle only punishes refusal.",
@@ -57,7 +60,20 @@ function OuroborosMark({ className }: { className?: string }) {
   );
 }
 
+function motionProps(delay = 0): MotionProps {
+  return {
+    initial: { opacity: 0.82, y: 24 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-12% 0px" },
+    transition: { duration: 0.72, delay, ease: [0.22, 1, 0.36, 1] as const }
+  };
+}
+
 export default function Page() {
+  const shouldReduceMotion = useReducedMotion();
+  const fade = (delay = 0): MotionProps =>
+    shouldReduceMotion ? { initial: false } : motionProps(delay);
+
   return (
     <main>
       <div className="light" />
@@ -77,40 +93,46 @@ export default function Page() {
 
       <section className="hero">
         <div>
-          <p className="kicker reveal">HTML5 Motion Experience</p>
-          <h1 className="reveal">
+          <motion.p className="kicker reveal" {...fade(0)}>
+            HTML5 Motion Experience
+          </motion.p>
+          <motion.h1 className="reveal" {...fade(0.08)}>
             Every End
             <br />
             Is A New
             <br />
             Beginning
-          </h1>
-          <p className="hero-copy reveal">
+          </motion.h1>
+          <motion.p className="hero-copy reveal" {...fade(0.16)}>
             Ouroboros is the discipline of returning to yourself - shedding what
             has expired, absorbing the lesson, and entering the next cycle with
             sharper intent.
-          </p>
-          <div className="actions reveal">
-            <a className="btn primary" href="#symbol">
+          </motion.p>
+          <motion.div className="actions reveal" {...fade(0.24)}>
+            <motion.a className="btn primary" href="#symbol" whileHover={shouldReduceMotion ? undefined : { y: -2 }}>
               Enter the cycle
-            </a>
-            <a className="btn" href="#manifesto">
+            </motion.a>
+            <motion.a className="btn" href="#manifesto" whileHover={shouldReduceMotion ? undefined : { y: -2 }}>
               Read manifesto
-            </a>
-          </div>
+            </motion.a>
+          </motion.div>
         </div>
 
-        <div className="visual reveal">
+        <motion.div className="visual reveal" {...fade(0.18)}>
           <div className="ring" />
           <div className="ring2" />
           <OuroborosMark className="symbol-svg" />
-          <div className="image-card">
+          <motion.div
+            className="image-card"
+            whileHover={shouldReduceMotion ? undefined : { rotateY: 2.5, rotateX: -2.5, y: -6 }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          >
             <img
               src="/ouroboros-hero.png"
               alt="Black minimalist fashion image inspired by the Ouroboros symbol"
             />
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
       <div className="marquee" aria-hidden="true">
@@ -122,51 +144,59 @@ export default function Page() {
       </div>
 
       <section className="section two" id="symbol">
-        <div className="reveal">
+        <motion.div className="reveal" {...fade(0)}>
           <p className="kicker">The Symbol</p>
           <h2>The serpent closes the circle.</h2>
-        </div>
+        </motion.div>
 
         <div className="cards">
           {cards.map((card, index) => (
-            <div className="card reveal" key={card}>
+            <motion.div
+              className="card reveal"
+              key={card}
+              {...fade(index * 0.05)}
+            >
               <span>{String(index + 1).padStart(2, "0")}</span>
               <strong>{card}</strong>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>
 
       <section className="section" id="cycle">
         <div className="two">
-          <div className="reveal">
+          <motion.div className="reveal" {...fade(0)}>
             <p className="kicker">The Cycle</p>
             <h2>Destroy. Digest. Design. Return.</h2>
-          </div>
-          <p className="copy reveal">
+          </motion.div>
+          <motion.p className="copy reveal" {...fade(0.08)}>
             The Ouroboros is not passive. It is a brutal symbol of
             self-renewal. The old version must be consumed before the new one
             can be built. In fashion, identity, business, and personal
             evolution, the loop is the same: remove excess, preserve essence,
             and return with intent.
-          </p>
+          </motion.p>
         </div>
 
         <div className="grid">
           {cycle.map(([title, body], index) => (
-            <article className="tile reveal" key={title}>
+            <motion.article
+              className="tile reveal"
+              key={title}
+              {...fade(index * 0.035)}
+            >
               <span>{String(index + 1).padStart(2, "0")}</span>
               <div>
                 <h3>{title}</h3>
                 <p>{body}</p>
               </div>
-            </article>
+            </motion.article>
           ))}
         </div>
       </section>
 
       <section className="section final" id="manifesto">
-        <div className="final-inner reveal">
+        <motion.div className="final-inner reveal" {...fade(0)}>
           <div className="symbol-wrap">
             <OuroborosMark />
           </div>
@@ -176,7 +206,7 @@ export default function Page() {
             The circle is not a trap. It is a forge. Each ending exposes what
             was weak. Each return proves what survived.
           </p>
-        </div>
+        </motion.div>
       </section>
 
       <footer className="footer">
