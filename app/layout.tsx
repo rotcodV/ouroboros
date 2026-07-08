@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "OUROBOROS - Every End Is A New Beginning",
   description:
-    "A motion-led landing page about renewal, discipline, return, and transformation.",
+    "An editorial landing page about renewal, discipline, return, and transformation.",
   icons: {
     icon: "/favicon.svg"
   }
