@@ -5,7 +5,7 @@ import type { MotionProps } from "framer-motion";
 
 const cards = [
   "Endings are not failures.",
-  "The cycle only punishes refusal.",
+  "The cycle rewards renewal.",
   "Renewal requires sacrifice.",
   "What returns must return transformed."
 ];
@@ -94,7 +94,7 @@ export default function Page() {
       <section className="hero">
         <div>
           <motion.p className="kicker reveal" {...fade(0)}>
-            HTML5 Motion Experience
+            Renewal / Discipline / Return
           </motion.p>
           <motion.h1 className="reveal" {...fade(0.08)}>
             Every End
@@ -129,7 +129,7 @@ export default function Page() {
           >
             <img
               src="/ouroboros-hero.png"
-              alt="Black minimalist fashion image inspired by the Ouroboros symbol"
+              alt="Monochrome figure framed by an Ouroboros symbol"
             />
           </motion.div>
         </motion.div>
@@ -170,9 +170,9 @@ export default function Page() {
             <h2>Destroy. Digest. Design. Return.</h2>
           </motion.div>
           <motion.p className="copy reveal" {...fade(0.08)}>
-            The Ouroboros is not passive. It is a brutal symbol of
+            The Ouroboros is not passive. It is an active symbol of
             self-renewal. The old version must be consumed before the new one
-            can be built. In fashion, identity, business, and personal
+            can be built. In identity, craft, business, and personal
             evolution, the loop is the same: remove excess, preserve essence,
             and return with intent.
           </motion.p>
